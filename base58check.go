@@ -11,7 +11,8 @@ import (
 
 const alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
 
-func Encode(version string, data string) (string, error) {
+// Encode encodes the given version and data to a base58check encoded string
+func Encode(version, data string) (string, error) {
 	prefix, err := hex.DecodeString(version)
 	if err != nil {
 		return "", err
@@ -53,6 +54,7 @@ func Encode(version string, data string) (string, error) {
 	return encoded, nil
 }
 
+// Decode decodes the given base58check encoded string and returns version prepended data
 func Decode(encoded string) (string, error) {
 	zeroCount := 0
 	for i := 0; i < len(encoded); i++ {
