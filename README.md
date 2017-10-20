@@ -1,4 +1,5 @@
 # base58check
+[![Build Status](https://travis-ci.org/anaskhan96/base58check.svg?branch=master)](https://travis-ci.org/anaskhan96/base58check)
 
 This package in Go provides functions to encode and decode in `base58check`, a specific `base58` encoding format for encoding Bitcoin addresses.
 
