@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"math/big"
 )
 
@@ -42,7 +43,7 @@ func Encode(version string, data string) (string, error) {
 	}
 
 	// Performing base58 encoding
-	encoded := b58encode(string(dataBytes))
+	encoded := b58encode(dataBytes)
 
 	for i := 0; i < zeroCount; i++ {
 		encoded = "1" + encoded
@@ -55,30 +56,34 @@ func Decode(encoded string) {
 
 }
 
-func b58encode(data string) string {
+func b58encode(data []byte) string {
 	var encoded string
 	decimalData := new(big.Int)
-	decimalData.SetBytes([]byte(data))
+	decimalData.SetBytes(data)
 	divisor, zero := big.NewInt(58), big.NewInt(0)
+
 	for decimalData.Cmp(zero) > 0 {
 		mod := new(big.Int)
 		decimalData.DivMod(decimalData, divisor, mod)
 		encoded = string(alphabet[mod.Int64()]) + encoded
 	}
+
 	return encoded
 }
 
-func b58decode(data string) string {
+func b58decode(data string) (string, error) {
 	decimalData := new(big.Int)
 	alphabetBytes := []byte(alphabet)
 	multiplier := big.NewInt(58)
+
 	for _, value := range data {
 		pos := bytes.IndexByte(alphabetBytes, byte(value))
 		if pos == -1 {
-			panic("Probably should return an error")
+			return "", errors.New("character not found in alphabet")
 		}
 		decimalData.Mul(decimalData, multiplier)
 		decimalData.Add(decimalData, big.NewInt(int64(pos)))
 	}
-	return string(decimalData.Bytes())
+
+	return string(decimalData.Bytes()), nil
 }
