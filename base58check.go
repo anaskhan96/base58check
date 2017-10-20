@@ -9,9 +9,15 @@ import (
 
 const alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
 
-func Encode(version string, data string) string {
-	prefix, _ := hex.DecodeString(version)
-	dataBytes, _ := hex.DecodeString(data)
+func Encode(version string, data string) (string, error) {
+	prefix, err := hex.DecodeString(version)
+	if err != nil {
+		return "", err
+	}
+	dataBytes, err := hex.DecodeString(data)
+	if err != nil {
+		return "", err
+	}
 	dataBytes = append(prefix, dataBytes...)
 
 	// Performing SHA256 twice
@@ -25,6 +31,7 @@ func Encode(version string, data string) string {
 	checksum := hash[:4]
 	dataBytes = append(dataBytes, checksum...)
 
+	// For all the "00" versions or any prepended zeros as base58 removes them
 	zeroCount := 0
 	for i := 0; i < len(dataBytes); i++ {
 		if dataBytes[i] == 0 {
@@ -41,7 +48,7 @@ func Encode(version string, data string) string {
 		encoded = "1" + encoded
 	}
 
-	return encoded
+	return encoded, nil
 }
 
 func Decode(encoded string) {
