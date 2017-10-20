@@ -2,10 +2,51 @@ package base58check
 
 import (
 	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
 	"math/big"
 )
 
 const alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+
+func Encode(version string, data string) string {
+	prefix, _ := hex.DecodeString(version)
+	dataBytes, _ := hex.DecodeString(data)
+	dataBytes = append(prefix, dataBytes...)
+
+	// Performing SHA256 twice
+	sha256hash := sha256.New()
+	sha256hash.Write(dataBytes)
+	middleHash := sha256hash.Sum(nil)
+	sha256hash = sha256.New()
+	sha256hash.Write(middleHash)
+	hash := sha256hash.Sum(nil)
+
+	checksum := hash[:4]
+	dataBytes = append(dataBytes, checksum...)
+
+	zeroCount := 0
+	for i := 0; i < len(dataBytes); i++ {
+		if dataBytes[i] == 0 {
+			zeroCount++
+		} else {
+			break
+		}
+	}
+
+	// Performing base58 encoding
+	encoded := b58encode(string(dataBytes))
+
+	for i := 0; i < zeroCount; i++ {
+		encoded = "1" + encoded
+	}
+
+	return encoded
+}
+
+func Decode(encoded string) {
+
+}
 
 func b58encode(data string) string {
 	var encoded string
@@ -27,7 +68,7 @@ func b58decode(data string) string {
 	for _, value := range data {
 		pos := bytes.IndexByte(alphabetBytes, byte(value))
 		if pos == -1 {
-			panic("Fuck off")
+			panic("Probably should return an error")
 		}
 		decimalData.Mul(decimalData, multiplier)
 		decimalData.Add(decimalData, big.NewInt(int64(pos)))
