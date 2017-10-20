@@ -54,7 +54,7 @@ func Encode(version, data string) (string, error) {
 	return encoded, nil
 }
 
-// Decode decodes the given base58check encoded string and returns the decoded string
+// Decode decodes the given base58check encoded string and returns the version prepended decoded string
 func Decode(encoded string) (string, error) {
 	zeroCount := 0
 	for i := 0; i < len(encoded); i++ {
@@ -87,7 +87,7 @@ func Decode(encoded string) (string, error) {
 		return "", errors.New("Data and checksum don't match")
 	}
 
-	return hex.EncodeToString(data)[2:], nil
+	return hex.EncodeToString(data), nil
 }
 
 func b58encode(data []byte) string {

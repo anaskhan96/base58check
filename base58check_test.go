@@ -22,7 +22,7 @@ func TestDecode(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	}
-	actual := strings.ToLower("44D00F6EB2E5491CD7AB7E7185D81B67A23C4980F62B2ED0914D32B7EB1C5581")
+	actual := strings.ToLower("8044D00F6EB2E5491CD7AB7E7185D81B67A23C4980F62B2ED0914D32B7EB1C5581")
 	if !reflect.DeepEqual(decoded, actual) {
 		t.Errorf("Expected %s, got %s", actual, decoded)
 	}

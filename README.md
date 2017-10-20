@@ -5,7 +5,7 @@ This package in Go provides functions to encode and decode in `base58check`, a s
 Functions:
 ```go
 func Encode(string, string) (string, error) // takes the version and data as hexadecimal strings and returns the encoded string
-func Decode(string) (string, error) // takes the encoded string and returns the decoded hexadecimal string
+func Decode(string) (string, error) // takes the encoded string and returns the decoded version prepended hexadecimal string
 ```
 
 ### Installation
@@ -37,7 +37,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(decoded) // 086eaa677895f92d4a6c5ef740c168932b5e3f44
+	fmt.Println(decoded) // 00086eaa677895f92d4a6c5ef740c168932b5e3f44
 }
 
 ```
