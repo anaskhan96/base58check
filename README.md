@@ -1,5 +1,7 @@
 # base58check
 [![Build Status](https://travis-ci.org/anaskhan96/base58check.svg?branch=master)](https://travis-ci.org/anaskhan96/base58check)
+[![GoDoc](https://godoc.org/github.com/anaskhan96/base58check?status.svg)](https://godoc.org/github.com/anaskhan96/base58check)
+[![Go Report Card](https://goreportcard.com/badge/github.com/anaskhan96/base58check)](https://goreportcard.com/report/github.com/anaskhan96/base58check)
 
 This package in Go provides functions to encode and decode in `base58check`, a specific `base58` encoding format for encoding Bitcoin addresses.
 
