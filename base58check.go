@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"math/big"
+	"reflect"
 )
 
 const alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
@@ -52,8 +53,39 @@ func Encode(version string, data string) (string, error) {
 	return encoded, nil
 }
 
-func Decode(encoded string) {
+func Decode(encoded string) (string, error) {
+	zeroCount := 0
+	for i := 0; i < len(encoded); i++ {
+		if encoded[i] == 49 {
+			zeroCount++
+		} else {
+			break
+		}
+	}
 
+	dataBytes, err := b58decode(encoded)
+	if err != nil {
+		return "", err
+	}
+	data, checksum := dataBytes[:len(dataBytes)-4], dataBytes[len(dataBytes)-4:]
+
+	for i := 0; i < zeroCount; i++ {
+		data = append([]byte{0}, data...)
+	}
+
+	// Performing SHA256 twice to validate checksum
+	sha256hash := sha256.New()
+	sha256hash.Write(data)
+	middleHash := sha256hash.Sum(nil)
+	sha256hash = sha256.New()
+	sha256hash.Write(middleHash)
+	hash := sha256hash.Sum(nil)
+
+	if !reflect.DeepEqual(checksum, hash[:4]) {
+		return "", errors.New("Data and checksum don't match")
+	}
+
+	return hex.EncodeToString(data), nil
 }
 
 func b58encode(data []byte) string {
@@ -71,7 +103,7 @@ func b58encode(data []byte) string {
 	return encoded
 }
 
-func b58decode(data string) (string, error) {
+func b58decode(data string) ([]byte, error) {
 	decimalData := new(big.Int)
 	alphabetBytes := []byte(alphabet)
 	multiplier := big.NewInt(58)
@@ -79,11 +111,11 @@ func b58decode(data string) (string, error) {
 	for _, value := range data {
 		pos := bytes.IndexByte(alphabetBytes, byte(value))
 		if pos == -1 {
-			return "", errors.New("character not found in alphabet")
+			return nil, errors.New("Character not found in alphabet")
 		}
 		decimalData.Mul(decimalData, multiplier)
 		decimalData.Add(decimalData, big.NewInt(int64(pos)))
 	}
 
-	return string(decimalData.Bytes()), nil
+	return decimalData.Bytes(), nil
 }
