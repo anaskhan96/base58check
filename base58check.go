@@ -69,7 +69,13 @@ func Decode(encoded string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	data, checksum := dataBytes[:len(dataBytes)-4], dataBytes[len(dataBytes)-4:]
+
+	dataBytesLen := len(dataBytes)
+	if dataBytesLen <= 4 {
+		return "", errors.New("b58decode return data len error")
+	}
+
+	data, checksum := dataBytes[:dataBytesLen-4], dataBytes[dataBytesLen-4:]
 
 	for i := 0; i < zeroCount; i++ {
 		data = append([]byte{0}, data...)
