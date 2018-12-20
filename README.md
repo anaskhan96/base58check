@@ -7,8 +7,8 @@ This package in Go provides functions to encode and decode in `base58check`, a s
 
 Functions:
 ```go
-func Encode(string, string) (string, error) // takes the version and data as hexadecimal strings and returns the encoded string
-func Decode(string) (string, error) // takes the encoded string and returns the decoded version prepended hexadecimal string
+func Encode(string, string) (string, error) {} // takes the version and data as hexadecimal strings and returns the encoded string
+func Decode(string) (string, error) {} // takes the encoded string and returns the decoded version prepended hexadecimal string
 ```
 
 ### Installation
