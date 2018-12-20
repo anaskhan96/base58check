@@ -72,7 +72,7 @@ func Decode(encoded string) (string, error) {
 
 	dataBytesLen := len(dataBytes)
 	if dataBytesLen <= 4 {
-		return "", errors.New("b58decode return data len error")
+		return "", errors.New("base58check data cannot be less than 4 bytes")
 	}
 
 	data, checksum := dataBytes[:dataBytesLen-4], dataBytes[dataBytesLen-4:]
